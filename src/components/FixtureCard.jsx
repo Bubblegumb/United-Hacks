@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getStatusLabel, getBadgeVariant, isLiveOrFinished } from '../utils/matchStatus';
 import { formatMatchDateTime } from '../utils/formatDate';
 import { getTeamColor } from '../utils/teamColors';
@@ -45,11 +46,14 @@ function TeamFlag({ crest, name, tla }) {
 }
 
 /**
- * Displays a single football match as a row.
+ * Displays a single football match as a clickable row.
+ * Clicking anywhere on the row navigates to the match detail page.
  *
  * @param {{ match: import('./FixtureCard').Match }} props
  */
 export default function FixtureCard({ match }) {
+  const navigate = useNavigate();
+
   const {
     utcDate,
     status,
@@ -70,10 +74,26 @@ export default function FixtureCard({ match }) {
   const homeColor = getTeamColor(homeTeam.name, homeTeam.tla);
   const awayColor = getTeamColor(awayTeam.name, awayTeam.tla);
 
+  const handleClick = useCallback(() => {
+    navigate(`/match/${match.id}`);
+  }, [match.id, navigate]);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate(`/match/${match.id}`);
+    }
+  }, [match.id, navigate]);
+
   return (
     <div 
       className="fixture-row"
       style={{ '--team-home': homeColor, '--team-away': awayColor }}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`${homeTeam.shortName || homeTeam.name} vs ${awayTeam.shortName || awayTeam.name} — view match details`}
     >
       <div className="team">
         <TeamFlag crest={homeTeam.crest} name={homeTeam.name} tla={homeTeam.tla} />

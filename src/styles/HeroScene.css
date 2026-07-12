@@ -100,3 +100,25 @@
   position: relative;
   z-index: 1;
 }
+
+.hero-details-btn {
+  position: relative;
+  z-index: 1;
+  margin-top: 28px;
+  background: none;
+  border: 1px solid var(--line-strong);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.hero-details-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(232, 184, 92, 0.06);
+}

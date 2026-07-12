@@ -48,3 +48,52 @@ export async function getFixtures(
 
   return response.json();
 }
+
+/**
+ * Fetches a single match by its football-data.org match ID.
+ */
+export async function getMatchDetail(matchId: string | number, signal?: AbortSignal) {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  const url = `${BASE_URL}/matches/${matchId}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'X-Auth-Token': apiKey || '',
+      'Accept': 'application/json',
+    },
+    signal,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(`Failed to fetch match detail: ${response.status} ${response.statusText}. ${errorText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetches head-to-head record for a given match ID.
+ * Returns the last N matches between the two teams.
+ */
+export async function getHeadToHead(matchId: string | number, limit = 5, signal?: AbortSignal) {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  const url = `${BASE_URL}/matches/${matchId}/head2head?limit=${limit}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'X-Auth-Token': apiKey || '',
+      'Accept': 'application/json',
+    },
+    signal,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(`Failed to fetch H2H: ${response.status} ${response.statusText}. ${errorText}`);
+  }
+
+  return response.json();
+}

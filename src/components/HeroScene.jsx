@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Countdown from './Countdown';
 import { formatMatchDateTime } from '../utils/formatDate';
 import { getTeamColor } from '../utils/teamColors';
@@ -12,6 +12,8 @@ import '../styles/HeroScene.css';
  * @param {boolean} [props.loading] - Whether data is loading.
  */
 export default function HeroScene({ nextMatch, loading }) {
+  const navigate = useNavigate();
+
   if (loading) {
     return (
       <div className="hero" aria-hidden="true">
@@ -49,6 +51,13 @@ export default function HeroScene({ nextMatch, loading }) {
       </div>
       <div className="match-date">{date}</div>
       <Countdown nextMatch={nextMatch} loading={loading} />
+      <button
+        className="hero-details-btn"
+        onClick={() => navigate(`/match/${nextMatch.id}`)}
+        aria-label={`View details for ${homeName} vs ${awayName}`}
+      >
+        DETAILS →
+      </button>
     </div>
   );
 }

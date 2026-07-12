@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import { useFixtures } from './hooks/useFixtures'
 import { COMPETITIONS } from './config/competitions'
 import CompetitionSelector from './components/CompetitionSelector'
 import FixtureList from './components/FixtureList'
+import MatchDetail from './components/MatchDetail'
 
 import { findNextFixture } from './utils/matchStatus.js'
 import './styles/App.css'
@@ -16,7 +18,7 @@ import Hero from './components/HeroScene'
  */
 const CURRENT_YEAR = new Date().getFullYear();
 
-function App() {
+function FixturesView() {
   // Controlled selection: defaults to the first featured competition.
   const [selectedCode, setSelectedCode] = useState(COMPETITIONS[0].code)
 
@@ -42,8 +44,6 @@ function App() {
 
   // Calculate the next upcoming match
   const nextMatch = useMemo(() => findNextFixture(matches), [matches])
-
-
 
   // Filter and sort matches based on search query
   const filteredMatches = useMemo(() => {
@@ -75,7 +75,6 @@ function App() {
 
       {/* ── Error states are handled gracefully inside FixtureList instead of as a banner ── */}
 
-
       {/* ── Fixture list ── */}
       <main id="fixture-panel" role="tabpanel" aria-label="Fixtures" className="section">
         <div className="section-head">
@@ -93,6 +92,15 @@ function App() {
         <FixtureList matches={filteredMatches} loading={loading} error={error} />
       </main>
     </>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<FixturesView />} />
+      <Route path="/match/:matchId" element={<MatchDetail />} />
+    </Routes>
   )
 }
 
