@@ -92,7 +92,7 @@ export default function CompetitionSelector({ selectedCode, onSelect, season, on
         {/* League Dropdown */}
         <div className="header__dropdown-wrap" ref={dropdownRef}>
           <div
-            className="nav-select"
+            className={`nav-select league-select ${dropdownOpen ? 'open' : ''}`}
             role="button"
             tabIndex={0}
             aria-haspopup="listbox"
@@ -100,7 +100,20 @@ export default function CompetitionSelector({ selectedCode, onSelect, season, on
             onClick={toggleDropdown}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleDropdown(); }}
           >
-            {activeCompetition.name}
+            <span className="nav-select-text">{activeCompetition.name}</span>
+            <svg
+              className="nav-select-arrow"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </div>
           {dropdownOpen && (
             <div className="nav-dropdown" role="listbox">
@@ -125,7 +138,7 @@ export default function CompetitionSelector({ selectedCode, onSelect, season, on
         {/* Season Dropdown */}
         <div className="header__dropdown-wrap" ref={seasonDropdownRef}>
           <div
-            className="nav-select"
+            className={`nav-select season-select ${seasonDropdownOpen ? 'open' : ''}`}
             role="button"
             tabIndex={0}
             aria-haspopup="listbox"
@@ -133,7 +146,20 @@ export default function CompetitionSelector({ selectedCode, onSelect, season, on
             onClick={toggleSeasonDropdown}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSeasonDropdown(); }}
           >
-            SEASON: {season}
+            <span className="nav-select-text">SEASON: {season}</span>
+            <svg
+              className="nav-select-arrow"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </div>
           {seasonDropdownOpen && (
             <div className="nav-dropdown" role="listbox" style={{ maxHeight: '300px', overflowY: 'auto' }}>

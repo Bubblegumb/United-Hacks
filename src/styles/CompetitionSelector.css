@@ -33,10 +33,39 @@
   cursor: pointer;
   text-transform: uppercase;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 160px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.nav-select:hover {
+.nav-select.league-select {
   border-color: var(--gold);
+}
+
+.nav-select.league-select:hover,
+.nav-select.league-select.open {
+  background: color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+.nav-select.season-select {
+  border-color: var(--green);
+}
+
+.nav-select.season-select:hover,
+.nav-select.season-select.open {
+  background: color-mix(in srgb, var(--green) 60%, transparent);
+}
+
+.nav-select-arrow {
+  color: var(--text-secondary);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-select.open .nav-select-arrow {
+  transform: rotate(180deg);
 }
 
 .nav-dropdown {
