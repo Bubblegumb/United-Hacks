@@ -7,7 +7,6 @@ import FixtureList from './components/FixtureList'
 import MatchDetail from './components/MatchDetail'
 
 import { findNextFixture } from './utils/matchStatus.js'
-import './styles/App.css'
 
 import Hero from './components/HeroScene'
 

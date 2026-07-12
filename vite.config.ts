@@ -10,22 +10,26 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       proxy: {
-        // Requests to /api/** are forwarded to football-data.org.
-        // The browser sees the same origin (localhost:5173) so no CORS preflight fires.
-        '^/api/': {
+        // Requests to /api/football-data/** are forwarded to football-data.org.
+        '^/api/football-data/': {
           target: 'https://api.football-data.org/v4',
-          changeOrigin: true,       // Rewrites the Host header to match the target
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-        '/apifootball': {
-          target: 'https://v3.football.api-sports.io',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/apifootball/, ''),
-          // Inject the API key at the proxy level (server-side) so it is guaranteed
-          // to reach the upstream even if browser headers are stripped or missing.
+          rewrite: (path) => path.replace(/^\/api\/football-data/, ''),
           configure: (proxy) => {
             proxy.on('proxyReq', (proxyReq) => {
-              const key = env.VITE_APIFOOTBALL_KEY;
+              const key = env.VITE_API_KEY || env.FOOTBALL_DATA_API_KEY;
+              if (key) proxyReq.setHeader('X-Auth-Token', key);
+            });
+          },
+        },
+        // Requests to /api/api-football/** are forwarded to api-sports.io.
+        '^/api/api-football/': {
+          target: 'https://v3.football.api-sports.io',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/api-football/, ''),
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              const key = env.VITE_APIFOOTBALL_KEY || env.APIFOOTBALL_API_KEY;
               if (key) proxyReq.setHeader('x-apisports-key', key);
             });
           },

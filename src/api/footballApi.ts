@@ -1,7 +1,6 @@
-// During development Vite proxies /api/** → https://api.football-data.org/v4/**
-// (see vite.config.ts server.proxy). This avoids browser CORS restrictions.
-// In production, replace this with your backend proxy URL.
-const BASE_URL = '/api';
+// Requests are proxied through /api/football-data/ (mapped to a Vercel Edge Function
+// in production and Vite proxy in development). This keeps the API key hidden from the client.
+const BASE_URL = '/api/football-data';
 
 /**
  * Fetches fixtures (matches) for a specific competition (league) and season.
@@ -14,16 +13,17 @@ export async function getFixtures(
   season?: string | number,
   signal?: AbortSignal
 ) {
-  const apiKey = import.meta.env.VITE_API_KEY;
-
-  if (!apiKey) {
-    console.warn(
-      'VITE_API_KEY is not set. Please define it in your .env.local file for local development, or in your Vercel project settings for production.'
-    );
+  // Validate leagueId to prevent path traversal
+  if (typeof leagueId === 'string' && !/^[a-zA-Z0-9-]+$/.test(leagueId)) {
+    throw new Error('Invalid league ID');
   }
 
   const params = new URLSearchParams();
   if (season) {
+    // Validate season format
+    if (!/^\d+$/.test(String(season))) {
+      throw new Error('Invalid season parameter');
+    }
     params.append('season', String(season));
   }
 
@@ -33,7 +33,6 @@ export async function getFixtures(
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-Auth-Token': apiKey || '',
       'Accept': 'application/json',
     },
     signal, // Forward the AbortSignal so fetch() can be cancelled
@@ -53,13 +52,16 @@ export async function getFixtures(
  * Fetches a single match by its football-data.org match ID.
  */
 export async function getMatchDetail(matchId: string | number, signal?: AbortSignal) {
-  const apiKey = import.meta.env.VITE_API_KEY;
+  // Validate matchId format
+  if (!/^\d+$/.test(String(matchId))) {
+    throw new Error('Invalid match ID');
+  }
+  
   const url = `${BASE_URL}/matches/${matchId}`;
 
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-Auth-Token': apiKey || '',
       'Accept': 'application/json',
     },
     signal,
@@ -78,13 +80,19 @@ export async function getMatchDetail(matchId: string | number, signal?: AbortSig
  * Returns the last N matches between the two teams.
  */
 export async function getHeadToHead(matchId: string | number, limit = 5, signal?: AbortSignal) {
-  const apiKey = import.meta.env.VITE_API_KEY;
+  // Validate parameters format
+  if (!/^\d+$/.test(String(matchId))) {
+    throw new Error('Invalid match ID');
+  }
+  if (!/^\d+$/.test(String(limit))) {
+    throw new Error('Invalid limit parameter');
+  }
+
   const url = `${BASE_URL}/matches/${matchId}/head2head?limit=${limit}`;
 
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'X-Auth-Token': apiKey || '',
       'Accept': 'application/json',
     },
     signal,

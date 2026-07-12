@@ -1,13 +1,12 @@
 /**
  * API-Football (api-sports.io) integration.
  *
- * All requests are proxied through /apifootball → https://v3.football.api-sports.io
- * (configured in vite.config.ts) to avoid browser CORS restrictions.
- * The API key is injected at the Vite proxy level (server-side) via the configure hook.
+ * All requests are proxied through /api/api-football/ (mapped to a Vercel Edge Function
+ * in production and Vite proxy in development). This keeps the API key hidden from the client.
  *
  * Free tier: 100 requests/day. Caching is handled in the hook layer (useApiFootball).
  */
-const BASE_URL = '/apifootball';
+const BASE_URL = '/api/api-football';
 
 /**
  * Maps football-data.org competition codes to API-Football league IDs.
@@ -32,14 +31,18 @@ const LEAGUE_MAP: Record<string, number> = {
 };
 
 function getHeaders(): Record<string, string> {
-  const key = import.meta.env.VITE_APIFOOTBALL_KEY;
   return {
-    'x-apisports-key': key || '',
     'Accept': 'application/json',
   };
 }
 
 async function apiFetch(path: string, signal?: AbortSignal) {
+  // Validate path format to prevent traversal at client/server boundary
+  // path must start with /fixtures and contain only valid alphanumeric, ?, =, & and - characters
+  if (!/^\/fixtures[a-zA-Z0-9/=?&_-]+$/.test(path)) {
+    throw new Error('Invalid API path requested');
+  }
+
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'GET',
     headers: getHeaders(),
@@ -76,6 +79,20 @@ function normName(s: string): string {
     .replace(/\s+(national\s+team|fc|sc|ac|cf|rc|united|city|town|albion|wanderers|athletic|athletico|hotspur)$/gi, '')
     .replace(/[^a-z0-9]/g, '')
     .trim();
+}
+
+interface ApiFootballFixture {
+  fixture: {
+    id: number;
+  };
+  teams?: {
+    home?: {
+      name?: string;
+    };
+    away?: {
+      name?: string;
+    };
+  };
 }
 
 /**
@@ -129,7 +146,7 @@ export async function findFixtureByTeamsAndDate(
   const awayNorm = normName(awayTeamName);
 
   // First pass: exact normalised match
-  let match = data.response.find((f: any) => {
+  let match = data.response.find((f: ApiFootballFixture) => {
     const h = normName(f.teams?.home?.name || '');
     const a = normName(f.teams?.away?.name || '');
     return h === homeNorm && a === awayNorm;
@@ -137,7 +154,7 @@ export async function findFixtureByTeamsAndDate(
 
   // Second pass: partial / substring match (handles "France" ↔ "France National Team")
   if (!match) {
-    match = data.response.find((f: any) => {
+    match = data.response.find((f: ApiFootballFixture) => {
       const h = normName(f.teams?.home?.name || '');
       const a = normName(f.teams?.away?.name || '');
       return (h.includes(homeNorm) || homeNorm.includes(h)) &&

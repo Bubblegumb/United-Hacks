@@ -78,3 +78,23 @@
   letter-spacing: 0.06em;
   color: var(--gold);
 }
+
+@media (max-width: 640px) {
+  .clock {
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .clock-digit {
+    font-size: 28px;
+  }
+  .clock-sep {
+    font-size: 28px;
+  }
+  .clock-label {
+    font-size: 9px;
+  }
+  .clock-live {
+    margin-top: 32px;
+    padding: 8px 16px;
+  }
+}

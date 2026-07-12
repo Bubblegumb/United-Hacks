@@ -478,7 +478,31 @@
 @media (max-width: 640px) {
   .md-section { padding: 40px 24px 0; }
   .back-link { padding: 20px 24px; }
-  .scoreline { padding: 20px 24px 32px; gap: 20px; }
+  
+  .scoreline { padding: 20px 16px 32px; gap: 12px; }
+  .scoreline-side {
+    flex-direction: column !important;
+    gap: 8px;
+    font-size: 14px;
+    text-align: center;
+  }
+  .scoreline-side.home, .scoreline-side.away {
+    justify-content: flex-start;
+  }
+  .scoreline-team-name {
+    white-space: normal;
+    word-break: break-word;
+  }
+  .scoreline-score {
+    font-size: clamp(28px, 6vw, 36px);
+  }
+  .scoreline-center {
+    min-width: 80px;
+  }
+  .scoreline-kickoff-time {
+    font-size: 20px;
+  }
+
   .stat-row {
     grid-template-columns: 40px 1fr 80px 1fr 40px;
     gap: 8px;

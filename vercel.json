@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://api.football-data.org/v4/$1"
+      "source": "/api/football-data/(.*)",
+      "destination": "/api/football-data"
+    },
+    {
+      "source": "/api/api-football/(.*)",
+      "destination": "/api/api-football"
     }
   ]
 }

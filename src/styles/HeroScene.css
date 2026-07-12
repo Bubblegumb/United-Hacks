@@ -19,7 +19,7 @@
   right: 0;
   bottom: 0;
   background: radial-gradient(circle at 15% 50%, var(--team-home, transparent) 0%, transparent 60%),
-              radial-gradient(circle at 85% 50%, var(--team-away, transparent) 0%, transparent 60%);
+    radial-gradient(circle at 85% 50%, var(--team-away, transparent) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.5s ease;
   z-index: 0;
@@ -36,8 +36,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 640px;
-  height: 640px;
+  width: min(100vw, 640px);
+  height: min(100vw, 640px);
   border-radius: 50%;
   border: 1px solid var(--line-strong);
   opacity: .5;
@@ -51,7 +51,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 2px;
-  height: 640px;
+  height: min(100vw, 640px);
   background: var(--line);
 }
 
@@ -117,8 +117,20 @@
   border-radius: 2px;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
+
 .hero-details-btn:hover {
   color: var(--gold);
   border-color: var(--gold);
   background: rgba(232, 184, 92, 0.06);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 70vh;
+  }
+
+  .matchup {
+    flex-direction: column;
+    gap: 8px;
+  }
 }

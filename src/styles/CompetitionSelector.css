@@ -71,3 +71,11 @@
   background: var(--bg-2);
   color: var(--gold);
 }
+
+@media (max-width: 768px) {
+  .nav {
+    padding: 16px 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}

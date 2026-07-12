@@ -29,6 +29,7 @@ body {
   font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 #root {
@@ -45,4 +46,10 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 0 48px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 24px;
+  }
 }
