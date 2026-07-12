@@ -1,0 +1,94 @@
+/* ─── HeroScene Banner ───────────────────────────────────────────────────────── */
+
+.hero-scene-banner {
+  width: 100%;
+  height: 320px;
+  position: relative;
+  overflow: hidden;
+
+  /* Atmospheric gradient background */
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 110%, rgba(0, 230, 118, 0.08) 0%, transparent 70%),
+    linear-gradient(180deg, #07101f 0%, #0a1628 60%, #081420 100%);
+}
+
+@media (prefers-color-scheme: light) {
+  .hero-scene-banner {
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 110%, rgba(0, 112, 243, 0.06) 0%, transparent 70%),
+      linear-gradient(180deg, #d6e4f7 0%, #e8f0fb 60%, #ccdaf5 100%);
+  }
+}
+
+/* Stadium floodlight vignette overlay */
+.hero-scene-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* The R3F Canvas fills the full banner */
+.hero-scene-banner canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─── Shimmer skeleton (shown while R3F lazy-loads) ─────────────────────────── */
+
+.hero-scene-shimmer {
+  width: 100%;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 110%, rgba(0, 230, 118, 0.05) 0%, transparent 70%),
+    linear-gradient(180deg, #07101f 0%, #0a1628 60%, #081420 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+@media (prefers-color-scheme: light) {
+  .hero-scene-shimmer {
+    background: linear-gradient(180deg, #d6e4f7 0%, #e8f0fb 100%);
+  }
+}
+
+/* Pulsing sphere placeholder */
+.hero-scene-shimmer__ball {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--border);
+  animation: hero-shimmer-pulse 1.8s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-scene-shimmer__ball::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 70%
+  );
+  animation: hero-shimmer-sweep 1.8s ease-in-out infinite;
+}
+
+@keyframes hero-shimmer-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(1.03); }
+}
+
+@keyframes hero-shimmer-sweep {
+  0%   { transform: translateX(-100%) translateY(-100%); }
+  100% { transform: translateX(100%) translateY(100%); }
+}
