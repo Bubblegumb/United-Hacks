@@ -7,30 +7,24 @@
   transition: background 0.3s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  .app-main {
-    background: var(--bg);
-  }
-}
-
 /* ─── Error banner ────────────────────────────────────────────────────────── */
 
 .app-error {
   margin: 16px 20px 0;
   padding: 12px 16px;
-  border-radius: 8px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0;
+  /* Sharp chalkboard border */
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   color: #dc2626;
-  font-size: 14px;
-  font-weight: 500;
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 600;
   text-align: left;
 }
 
-@media (prefers-color-scheme: dark) {
-  .app-error {
-    background: rgba(239, 68, 68, 0.12);
-    border-color: rgba(239, 68, 68, 0.3);
-    color: #f87171;
-  }
+:root[data-theme="dark"] .app-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #f87171;
 }

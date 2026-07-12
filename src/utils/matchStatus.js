@@ -65,3 +65,30 @@ export function getStatusLabel(status) {
 export function getBadgeVariant(status) {
   return STATUS_BADGE_VARIANT[status] ?? 'badge--finished';
 }
+
+const UPCOMING_STATUSES = new Set(['SCHEDULED', 'TIMED']);
+
+/**
+ * Finds the earliest match in the array that has a status of SCHEDULED or TIMED.
+ * Returns `null` if no such match exists.
+ *
+ * @param {any[]} fixtures
+ * @returns {any|null}
+ */
+export function findNextFixture(fixtures) {
+  if (!Array.isArray(fixtures) || fixtures.length === 0) return null;
+
+  let earliest = null;
+  let earliestMs = Infinity;
+
+  for (const match of fixtures) {
+    if (!UPCOMING_STATUSES.has(match.status)) continue;
+    const ms = new Date(match.utcDate).getTime();
+    if (ms < earliestMs) {
+      earliestMs = ms;
+      earliest = match;
+    }
+  }
+
+  return earliest;
+}

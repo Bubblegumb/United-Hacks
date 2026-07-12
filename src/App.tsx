@@ -1,39 +1,37 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useFixtures } from './hooks/useFixtures'
-import { COMPETITIONS } from './config/competitions.tsx'
+import { COMPETITIONS } from './config/competitions'
 import CompetitionSelector from './components/CompetitionSelector'
 import FixtureList from './components/FixtureList'
-import Countdown from './components/Countdown'
+
+import { findNextFixture } from './utils/matchStatus.js'
 import './styles/App.css'
 
-/**
- * HeroScene is lazy-loaded so that Three.js and @react-three/fiber are
- * excluded from the initial JS bundle.
- *
- * bundle-dynamic-imports: heavy 3D runtime loaded only when needed.
- */
-const HeroScene = lazy(() => import('./components/HeroScene'))
-
-/**
- * Shimmer placeholder shown while HeroScene's chunk is downloading.
- * Defined at module scope (rerender-no-inline-components).
- */
-function HeroSceneShimmer() {
-  return <div className="hero-scene-shimmer" aria-hidden="true"><div className="hero-scene-shimmer__ball" /></div>
-}
+import Hero from './components/HeroScene'
 
 /**
  * ⚠️  KNOWN ASSUMPTION — season is hard-coded to 2026.
  * When season selection is added, lift this into a second useState and pass
  * the season value to both useFixtures and a future SeasonSelector component.
  */
-const SEASON = 2026
+const CURRENT_YEAR = new Date().getFullYear();
 
 function App() {
   // Controlled selection: defaults to the first featured competition.
   const [selectedCode, setSelectedCode] = useState(COMPETITIONS[0].code)
 
-  const { fixtures, loading, error } = useFixtures(selectedCode, SEASON)
+  // Season state
+  const [season, setSeason] = useState(CURRENT_YEAR)
+
+  // Search query state
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const { fixtures, loading, error } = useFixtures(selectedCode, season)
+
+  // Reset search query when competition changes
+  useEffect(() => {
+    setSearchQuery('');
+  }, [selectedCode]);
 
   // football-data.org wraps the array under a `matches` key.
   // ⚠️  KNOWN ASSUMPTION: if the API shape changes, this single line is the only place to update.
@@ -42,36 +40,57 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const matches: any[] = Array.isArray(fixturesData?.matches) ? fixturesData.matches : []
 
+  // Calculate the next upcoming match
+  const nextMatch = useMemo(() => findNextFixture(matches), [matches])
+
+
+
+  // Filter and sort matches based on search query
+  const filteredMatches = useMemo(() => {
+    let result = matches;
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase().trim();
+      result = matches.filter((match) => {
+        const home = (match.homeTeam.shortName || match.homeTeam.name || '').toLowerCase();
+        const away = (match.awayTeam.shortName || match.awayTeam.name || '').toLowerCase();
+        return home.includes(query) || away.includes(query);
+      });
+    }
+    // Sort from latest to oldest (newest date first)
+    return [...result].sort((a, b) => new Date(b.utcDate).getTime() - new Date(a.utcDate).getTime());
+  }, [matches, searchQuery]);
+
   return (
     <>
-      {/* ── Competition tab bar ── */}
+      {/* ── Top Header (Logo, dropdown league selector) ── */}
       <CompetitionSelector
         selectedCode={selectedCode}
         onSelect={setSelectedCode}
+        season={season}
+        onSeasonSelect={setSeason}
       />
 
-      {/* ── Hero 3D scene ── */}
-      {/* Suspense boundary is isolated — a loading or error state here        */}
-      {/* NEVER affects the Countdown or FixtureList below it.                 */}
-      {/* async-suspense-boundaries: stream the 3D section independently.      */}
-      <Suspense fallback={<HeroSceneShimmer />}>
-        <HeroScene />
-      </Suspense>
+      {/* ── Hero static scene ── */}
+      <Hero nextMatch={nextMatch} loading={loading} />
 
-      {/* ── Countdown to next match ── */}
-      <Countdown fixtures={matches} loading={loading} />
+      {/* ── Error states are handled gracefully inside FixtureList instead of as a banner ── */}
 
-      {/* ── Error banner ── */}
-      {/* 429 Rate Limit errors are handled gracefully inside FixtureList instead of as a banner */}
-      {error && !error.includes('Rate limit') ? (
-        <div role="alert" className="app-error">
-          {error}
+
+      {/* ── Fixture list ── */}
+      <main id="fixture-panel" role="tabpanel" aria-label="Fixtures" className="section">
+        <div className="section-head">
+          <div className="section-title">FIXTURES & RESULTS</div>
+          <input
+            type="text"
+            className="search"
+            placeholder="Search teams..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search teams"
+          />
         </div>
-      ) : null}
 
-      {/* ── Fixture grid ── */}
-      <main id="fixture-panel" role="tabpanel" aria-label="Fixtures" className="app-main">
-        <FixtureList matches={matches} loading={loading} error={error} />
+        <FixtureList matches={filteredMatches} loading={loading} error={error} />
       </main>
     </>
   )

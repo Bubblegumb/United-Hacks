@@ -1,238 +1,98 @@
-/* ─── FixtureCard ──────────────────────────────────────────────────────────── */
-
-.fixture-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 16px 20px 14px;
-  border-radius: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
-  text-align: center;
-  overflow: hidden;
-}
-
-.fixture-card:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-3px);
-}
-
-@media (prefers-color-scheme: dark) {
-  .fixture-card {
-    background: var(--bg-card);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  }
-  .fixture-card:hover {
-    border-color: rgba(0, 230, 118, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 230, 118, 0.15);
-    transform: translateY(-3px);
-  }
-}
-
-/* ── Teams row ──────────────────────────────────────────────────────────────── */
-
-.fixture-card__teams {
+.fixture-row {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto 1fr 100px;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 16px;
+  margin: 0 -16px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  z-index: 1;
+}
+
+.fixture-row::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--team-home, transparent) 0%, transparent 40%, transparent 60%, var(--team-away, transparent) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(15px);
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+.fixture-row:hover::before {
+  opacity: 0.4;
+}
+
+.fixture-row:hover {
+  transform: translateY(-2px);
+  background: var(--surface);
+  border-bottom-color: transparent;
+  border-radius: 8px;
+}
+
+.team {
+  display: flex;
   align-items: center;
   gap: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
-/* ── Individual team block ─────────────────────────────────────────────────── */
-
-.fixture-card__team {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
+.team.away {
+  justify-content: flex-end;
+  text-align: right;
 }
 
-.fixture-card__team--away {
-  /* Mirror the layout so the away team is right-aligned on its side */
-}
-
-.fixture-card__crest-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--code-bg);
+.flag {
+  width: 26px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
-.fixture-card__crest {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
+.flag img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.fixture-card__crest-fallback {
-  font-size: 14px;
+.flag-fallback {
+  font-size: 8px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.score {
+  font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.5px;
-  user-select: none;
-}
-
-.fixture-card__team-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-h);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100px;
-}
-
-/* ── Center: score / time ──────────────────────────────────────────────────── */
-
-.fixture-card__center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.fixture-card__score {
   font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text-h);
-  white-space: nowrap;
+  color: var(--text-primary);
+  text-align: center;
+  min-width: 64px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .fixture-card__score {
-    color: var(--accent);
-  }
-}
-
-.fixture-card__kickoff {
-  font-size: 18px;
+.status {
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--green);
+  text-align: right;
   font-weight: 600;
-  color: var(--text-h);
-  white-space: nowrap;
-}
-
-.fixture-card__venue {
-  font-size: 11px;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 110px;
-}
-
-/* ── Status badge ──────────────────────────────────────────────────────────── */
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
-.badge--live {
-  background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
-}
-
-@media (prefers-color-scheme: dark) {
-  .badge--live {
-    background: rgba(0, 230, 118, 0.18);
-    color: #00e676;
-  }
-}
-
-.badge--live .badge__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: pulse-dot 1.4s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.7); }
-}
-
-.badge--upcoming {
-  background: rgba(99, 102, 241, 0.12);
-  color: #6366f1;
-}
-
-@media (prefers-color-scheme: dark) {
-  .badge--upcoming {
-    background: rgba(99, 102, 241, 0.2);
-    color: #a5b4fc;
-  }
-}
-
-.badge--paused {
-  background: rgba(234, 179, 8, 0.15);
-  color: #b45309;
-}
-
-@media (prefers-color-scheme: dark) {
-  .badge--paused {
-    background: rgba(234, 179, 8, 0.18);
-    color: #fbbf24;
-  }
-}
-
-.badge--finished {
-  background: rgba(107, 114, 128, 0.12);
-  color: #6b7280;
-}
-
-@media (prefers-color-scheme: dark) {
-  .badge--finished {
-    background: rgba(107, 114, 128, 0.2);
-    color: #9ca3af;
-  }
-}
-
-.badge--cancelled {
-  background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
-}
-
-@media (prefers-color-scheme: dark) {
-  .badge--cancelled {
-    background: rgba(239, 68, 68, 0.18);
-    color: #f87171;
-  }
-}
-
-/* ── Footer: date ──────────────────────────────────────────────────────────── */
-
-.fixture-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 11px;
-  color: var(--text);
-  border-top: 1px solid var(--border);
-  padding-top: 10px;
-  margin-top: 2px;
-}
-
-.fixture-card__footer-sep {
-  opacity: 0.4;
+.status.live {
+  color: var(--gold);
 }

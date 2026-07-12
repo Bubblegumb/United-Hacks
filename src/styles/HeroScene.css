@@ -1,94 +1,102 @@
-/* ─── HeroScene Banner ───────────────────────────────────────────────────────── */
-
-.hero-scene-banner {
-  width: 100%;
-  height: 320px;
+.hero {
   position: relative;
+  min-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-
-  /* Atmospheric gradient background */
   background:
-    radial-gradient(ellipse 60% 80% at 50% 110%, rgba(0, 230, 118, 0.08) 0%, transparent 70%),
-    linear-gradient(180deg, #07101f 0%, #0a1628 60%, #081420 100%);
+    radial-gradient(ellipse 900px 500px at 50% 0%, rgba(232, 184, 92, 0.10), transparent 60%),
+    var(--bg);
 }
 
-@media (prefers-color-scheme: light) {
-  .hero-scene-banner {
-    background:
-      radial-gradient(ellipse 60% 80% at 50% 110%, rgba(0, 112, 243, 0.06) 0%, transparent 70%),
-      linear-gradient(180deg, #d6e4f7 0%, #e8f0fb 60%, #ccdaf5 100%);
-  }
-}
-
-/* Stadium floodlight vignette overlay */
-.hero-scene-banner::before {
+.hero::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 15% 50%, var(--team-home, transparent) 0%, transparent 60%),
+              radial-gradient(circle at 85% 50%, var(--team-away, transparent) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+  filter: blur(60px);
   pointer-events: none;
+}
+
+.hero:hover::before {
+  opacity: 0.45;
+}
+
+.pitch-arc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  opacity: .5;
   z-index: 1;
 }
 
-/* The R3F Canvas fills the full banner */
-.hero-scene-banner canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* ─── Shimmer skeleton (shown while R3F lazy-loads) ─────────────────────────── */
-
-.hero-scene-shimmer {
-  width: 100%;
-  height: 320px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(ellipse 60% 80% at 50% 110%, rgba(0, 230, 118, 0.05) 0%, transparent 70%),
-    linear-gradient(180deg, #07101f 0%, #0a1628 60%, #081420 100%);
-  overflow: hidden;
-  position: relative;
-}
-
-@media (prefers-color-scheme: light) {
-  .hero-scene-shimmer {
-    background: linear-gradient(180deg, #d6e4f7 0%, #e8f0fb 100%);
-  }
-}
-
-/* Pulsing sphere placeholder */
-.hero-scene-shimmer__ball {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: var(--border);
-  animation: hero-shimmer-pulse 1.8s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-scene-shimmer__ball::after {
+.pitch-arc::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.12) 50%,
-    transparent 70%
-  );
-  animation: hero-shimmer-sweep 1.8s ease-in-out infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 640px;
+  background: var(--line);
 }
 
-@keyframes hero-shimmer-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%       { opacity: 0.7; transform: scale(1.03); }
+.eyebrow {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  letter-spacing: .18em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 18px;
 }
 
-@keyframes hero-shimmer-sweep {
-  0%   { transform: translateX(-100%) translateY(-100%); }
-  100% { transform: translateX(100%) translateY(100%); }
+.matchup {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 84px);
+  letter-spacing: -.01em;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.matchup .vs {
+  font-size: .35em;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-weight: 500;
+}
+
+.match-date {
+  position: relative;
+  z-index: 1;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 14px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero .clock {
+  position: relative;
+  z-index: 1;
 }
